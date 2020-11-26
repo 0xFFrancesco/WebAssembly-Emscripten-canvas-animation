@@ -1,0 +1,16 @@
+{
+  "name": "webassembly-emscripten-canvas-animation",
+  "version": "1.0.0",
+  "description": "webassembly-emscripten-canvas-animation",
+  "main": "index.html",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "compile": "emcc lib/demo.c -s WASM=1 -O3 -s EXPORTED_FUNCTIONS=\"['_initSettings', '_generateData', '_updateData', '_getCirclesMemoryPointerInBytes', '_getItemSizeInBytes']\" -o ./public/demo.js",
+    "start": "node server.js"
+  },
+  "author": "Francesco Rizzi",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.17.1"
+  }
+}

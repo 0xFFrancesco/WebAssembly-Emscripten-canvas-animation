@@ -1,0 +1,38 @@
+<!doctype html>
+
+<html lang="en">
+
+    <head>
+        <meta charset="utf-8">
+
+        <title>WebAssembly Emscripten - Canvas Animation</title>
+        <meta name="description" content="WebAssembly Emscripten - Canvas Animation">
+        <meta name="author" content="Francesco Rizzi">
+
+        <link rel="stylesheet" href="styles.css">
+
+
+    </head>
+
+    <body>
+
+        <div id="mainTitle">WebAssembly ⚡ Emscripten - Canvas Animation</div>
+
+        <div id="settings">
+            <div id="settingsTitle">Settings (<span id="collapseSettings" onclick="collapseSettings()">collapse</span>)</div>
+            <div id="inputs"></div>
+            <div id="buttons">
+                <button id="updateBtn"onclick="updateSettings()">🔄 Update</button>  
+                <button id="pauseBtn" disabled onclick="pause()">⏸ Pause</button>  
+                <button id="resumeBtn" onclick="resume()">▶️ Resume</button>
+            </div>    
+        </div>
+
+        <canvas id="canvas"></canvas>
+
+        <script src="demo.js"/></script>
+        <script src="main.js"/></script>
+
+    </body>
+
+</html>

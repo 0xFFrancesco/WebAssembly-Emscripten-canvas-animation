@@ -1,0 +1,105 @@
+html, body {
+    background-color: #333;
+    color: white;
+    margin: 0;
+    height: 100%;
+    font-family: Helvetica, Arial, sans-serif;
+}
+
+body {
+    display: grid;
+    grid-template-rows: auto auto 1fr;
+}
+
+#mainTitle {
+    padding: 24px;
+    font-size: 24px;
+    text-align: center;
+}
+
+#settings {
+    min-width: 400px;
+    max-width: 1200px;
+    width: 100%;
+    margin: 0 auto;
+}
+
+#settingsTitle {
+    font-size: 16px;
+    padding: 0 15px;
+}
+
+#inputs {
+    padding: 15px 15px 0px 15px;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    row-gap: 15px;
+    column-gap: 15px;
+}
+
+#inputs label, #inputs input {
+    display: block;
+    font-size: 12px;
+}
+
+#inputs label {
+    cursor: pointer;
+}
+
+#inputs input {
+    border-radius: 3px;
+    border: none;
+    margin-top: 5px;
+    padding: 5px 10px;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+#buttons{
+    padding: 30px 15px;
+    letter-spacing: 0;
+    font-size: 0;
+}
+
+#buttons button {
+    border: none;
+    padding: 5px 15px;
+    cursor: pointer;
+    background: white;
+    font-size: 16px;
+    border-radius: 3px;
+    text-transform: uppercase;
+}
+
+#buttons button:disabled {
+    opacity: 0.85;
+    background: white;
+    cursor: initial;
+}
+
+#updateBtn {
+    margin-right: 30px;
+}
+
+#pauseBtn {
+    border-top-right-radius: 0 !important;
+    border-bottom-right-radius: 0 !important;
+}
+
+#resumeBtn {
+    border-top-left-radius: 0 !important;
+    border-bottom-left-radius: 0 !important;
+}
+
+#collapseSettings {
+    font-style: italic;
+    cursor: pointer;
+}
+
+#canvas {
+    height: 100%;
+    min-height: 200px;
+    width: 100%;
+    background-color: white;
+    display: block;
+}

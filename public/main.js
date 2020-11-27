@@ -1,23 +1,23 @@
 //SETTINGS
 //////////
 const dafaultSettings = {
-    circlesNumber: 32,
-    sizeMin: 4,
-    sizeMax: 12,
-    sizeGlowing: 4,
+    circlesNumber: 64,
+    sizeMin: 2,
+    sizeMax: 16,
+    sizeGlowing: 16,
     sizeGlowingVelocity: 1,
     hueMin: 64,
     hueMax: 128,
     hueGlowing: 64,
-    hueGlowingVelocity: 4,
-    alphaMin: 16,
+    hueGlowingVelocity: 6,
+    alphaMin: 30,
     alphaMax: 80,
     velocityInitialMin: 0,
-    velocityInitialMax: 5,
+    velocityInitialMax: 2,
     velocityFinalMax: 10,
     accelerationMin: 1,
-    accelerationMax: 2,
-    accelerationDivider: 120,
+    accelerationMax: 3,
+    accelerationDivider: 50,
 }
 const settings = {
     showTrails: false,

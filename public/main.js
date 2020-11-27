@@ -42,11 +42,9 @@ function renderUISettings() {
     const wrapper = document.getElementById('inputs');
     let html = "";
     Object.entries(dafaultSettings).forEach(([k, val]) => {
-
         html += `<label for="${k}">${k}: 
             <input type="number" value="${val}" id="${k}" min="0" />
         </label>`;
-
     })
     wrapper.innerHTML = html;
 }
@@ -74,17 +72,18 @@ const render = () => {
         context.clearRect(0, 0, settings.canvasWidth, settings.canvasHeight);
     }
 
+    //Call WebAssembly to fast-compute the new circles data
     _updateData();
 
-    //We divide by 4 cause we receive the pointer and size in bytes, but we work with integers of 4 bytes each
+    //Here we divide by 4 because we receive the pointer and size in bytes, but we work with integers of 4 bytes each
     const itemSize = _getItemSizeInBytes() / 4;
     const memoryStartingLocation = _getCirclesMemoryPointerInBytes() / 4;
     //We use HEAP32 that already groups and represent for us the data in integers of 4 bytes each
-    const circles = Module.HEAP32.subarray(memoryStartingLocation, memoryStartingLocation + (itemSize * settings.circlesNumber));
+    const circlesData = Module.HEAP32.subarray(memoryStartingLocation, memoryStartingLocation + (itemSize * settings.circlesNumber));
 
-    for (let i=0; i<circles.length; i+=itemSize ) {
-        let c = circles.slice(i, i+itemSize);
-        drawCircle(c[0],c[1],c[2],c[3],c[4],c[5],c[6]);
+    for (let i=0; i<circlesData.length; i+=itemSize ) {
+        let circle = circlesData.slice(i, i+itemSize);
+        drawCircle(...circle);
     };
 
     animationFrameId = requestAnimationFrame(render);

@@ -1,8 +1,8 @@
-#include <stdio.h>
-#include <time.h>
-#include <stdlib.h>
 #include <emscripten.h>
 #include <inttypes.h>
+#include <stdlib.h>
+#include <stdio.h>
+#include <time.h>
 
 struct Circle {
     int32_t x;
@@ -15,21 +15,21 @@ struct Circle {
 };
 
 struct CircleAnimationData {
-    float xv;
-    float yv;
-    int xvinitial;
-    int yvinitial;
-    int xdir;
-    int ydir;
-    int xacc;
-    int yacc;
-    int rinitial;
-    int ginitial;
-    int binitial;
-    int glamount;
-    int gldir;
-    int radiousinitial;
-    int radiousdir;
+    float xVelovity;
+    float yVelocity;
+    int xVelocityInitial;
+    int yVelocityInitial;
+    int xDirection;
+    int yDirection;
+    int xAcceleration;
+    int yAcceleration;
+    int redInitial;
+    int greenInitial;
+    int blueInitial;
+    int hueGLowingAmount;
+    int hueGlowgingDirection;
+    int radiousInitial;
+    int radiousDirection;
 };
 
 int CIRCLES_NUMBER = 0;
@@ -55,7 +55,7 @@ int CANVAS_HEIGHT = 0;
 struct Circle *circles;
 struct CircleAnimationData *circlesAnimationData;
 
-int getRand(min, max) {
+int getRandInRange(min, max) {
     return rand() % (max + 1 - min) + min;
 }
 
@@ -63,10 +63,9 @@ int getItemSizeInBytes() {
     return sizeof(struct Circle);
 }
 
-// void startRendering() {
-//     printf("WASM> start rendering...\n");
-//     emscripten_run_script("render()");
-// }
+struct Circle *getCirclesMemoryPointerInBytes() {
+    return circles;
+}
 
 void initSettings() {
     printf("WASM> init settings...\n");
@@ -103,145 +102,132 @@ void generateData() {
     printf("WASM> generate data...\n");
     
     for (int i=0; i<CIRCLES_NUMBER; i++){
-        int radious = getRand(RADIOUS_MIN, RADIOUS_MAX);
-        int x = CANVAS_WIDTH / 2 + getRand(-30, 30);//getRand(CANVAS_WIDTH) + (radious / 2);
-        int y = CANVAS_HEIGHT / 2 + getRand(-30, 30);//getRand(CANVAS_HEIGHT) + (radious / 2);
+        circles[i].radious = getRandInRange(RADIOUS_MIN, RADIOUS_MAX);;
+        circles[i].x =  CANVAS_WIDTH / 2 + getRandInRange(-30, 30); //getRand(radious, CANVAS_WIDTH - radious);
+        circles[i].y = CANVAS_HEIGHT / 2 + getRandInRange(-30, 30); //getRand(radious, CANVAS_HEIGHT - radious);
+        circles[i].red = getRandInRange(HUE_MIN, HUE_MAX);
+        circles[i].green = getRandInRange(HUE_MIN, HUE_MAX);
+        circles[i].blue = getRandInRange(HUE_MIN, HUE_MAX);
+        circles[i].alpha = getRandInRange(ALPHA_MIN, ALPHA_MAX);
 
-        circles[i].radious = radious;
-        circles[i].x = x;
-        circles[i].y = y;
-        circles[i].x = x;
-        circles[i].red = getRand(HUE_MIN, HUE_MAX);
-        circles[i].green = getRand(HUE_MIN, HUE_MAX);
-        circles[i].blue = getRand(HUE_MIN, HUE_MAX);
-        circles[i].alpha = getRand(ALPHA_MIN, ALPHA_MAX);
-
-        circlesAnimationData[i].xv = getRand(VELOCITY_INITIAL_MIN, VELOCITY_INITIAL_MAX);
-        circlesAnimationData[i].yv = getRand(VELOCITY_INITIAL_MIN, VELOCITY_INITIAL_MAX);
-        circlesAnimationData[i].xvinitial = circlesAnimationData[i].xv;
-        circlesAnimationData[i].yvinitial = circlesAnimationData[i].yv;
-        circlesAnimationData[i].xdir = getRand(0, 1);
-        circlesAnimationData[i].ydir = getRand(0, 1);
-        circlesAnimationData[i].xacc = getRand(ACCELERATION_MIN, ACCELERATION_MAX);
-        circlesAnimationData[i].yacc = getRand(ACCELERATION_MIN, ACCELERATION_MAX);
-        circlesAnimationData[i].rinitial = circles[i].red;
-        circlesAnimationData[i].ginitial = circles[i].green;
-        circlesAnimationData[i].binitial = circles[i].blue;
-        circlesAnimationData[i].gldir = getRand(0, 1);
-        circlesAnimationData[i].radiousinitial = circles[i].radious;
-        circlesAnimationData[i].radiousdir = getRand(0, 1);
-    }
-    //startRendering();
-}
-
-void accelerate(struct CircleAnimationData *animData){
-    //ACCELLERATION
-    int velocityFinalMaxX = VELOCITY_FINAL_MAX - animData->xvinitial;
-    if (animData->xv <= velocityFinalMaxX) {
-        float xaccel = animData->xacc / (float)ACCELERATION_DIVIDER;
-        float newXVelocity = animData->xv + xaccel;
-        animData->xv = newXVelocity > velocityFinalMaxX ? velocityFinalMaxX : newXVelocity;
-    }
-
-    int velocityFinalMaxY = VELOCITY_FINAL_MAX - animData->yvinitial;
-    if (animData->yv <= velocityFinalMaxY) {
-        float yaccel = animData->yacc / (float)ACCELERATION_DIVIDER;
-        float newYVelocity = animData->yv + yaccel;
-        animData->yv = newYVelocity > velocityFinalMaxY ? velocityFinalMaxY : newYVelocity;
+        circlesAnimationData[i].xVelovity = getRandInRange(VELOCITY_INITIAL_MIN, VELOCITY_INITIAL_MAX);
+        circlesAnimationData[i].yVelocity = getRandInRange(VELOCITY_INITIAL_MIN, VELOCITY_INITIAL_MAX);
+        circlesAnimationData[i].xVelocityInitial = circlesAnimationData[i].xVelovity;
+        circlesAnimationData[i].yVelocityInitial = circlesAnimationData[i].yVelocity;
+        circlesAnimationData[i].xDirection = getRandInRange(0, 1);
+        circlesAnimationData[i].yDirection = getRandInRange(0, 1);
+        circlesAnimationData[i].xAcceleration = getRandInRange(ACCELERATION_MIN, ACCELERATION_MAX);
+        circlesAnimationData[i].yAcceleration = getRandInRange(ACCELERATION_MIN, ACCELERATION_MAX);
+        circlesAnimationData[i].redInitial = circles[i].red;
+        circlesAnimationData[i].greenInitial = circles[i].green;
+        circlesAnimationData[i].blueInitial = circles[i].blue;
+        circlesAnimationData[i].hueGlowgingDirection = getRandInRange(0, 1);
+        circlesAnimationData[i].radiousInitial = circles[i].radious;
+        circlesAnimationData[i].radiousDirection = getRandInRange(0, 1);
     }
 }
 
-int getGlowingValue(struct CircleAnimationData *animData, int *dir, int initialValue, int currentValue, int allowDirChange, int glowingDelta, int velocity) {
-    if (*dir == 1) {
+void computeAcceleration(struct CircleAnimationData *animData){
+    int velocityFinalMaxX = VELOCITY_FINAL_MAX - animData->xVelocityInitial;
+    if (animData->xVelovity <= velocityFinalMaxX) {
+        float xAcceleration = animData->xAcceleration / (float)ACCELERATION_DIVIDER;
+        float newXVelocity = animData->xVelovity + xAcceleration;
+        animData->xVelovity = newXVelocity > velocityFinalMaxX ? velocityFinalMaxX : newXVelocity;
+    }
+
+    int velocityFinalMaxY = VELOCITY_FINAL_MAX - animData->yVelocityInitial;
+    if (animData->yVelocity <= velocityFinalMaxY) {
+        float yAcceleration = animData->yAcceleration / (float)ACCELERATION_DIVIDER;
+        float newYVelocity = animData->yVelocity + yAcceleration;
+        animData->yVelocity = newYVelocity > velocityFinalMaxY ? velocityFinalMaxY : newYVelocity;
+    }
+}
+
+int getGlowingValue(struct CircleAnimationData *animData, int *direction, int initialValue, int currentValue, int allowDirectionChange, int glowingAmount, int velocity) {
+    if (*direction == 1) {
         int newValue = currentValue + velocity;
-        if (newValue >= initialValue + glowingDelta) {
-            newValue = initialValue + glowingDelta;
-            if (allowDirChange == 1) {
-                *dir = 0;
+        if (newValue >= initialValue + glowingAmount) {
+            newValue = initialValue + glowingAmount;
+            if (allowDirectionChange == 1) {
+                *direction = 0;
             }
         }
         return newValue;
     } else {
         int newValue = currentValue - velocity;
-        if (newValue <= initialValue - glowingDelta || newValue < 0) {
-            newValue = initialValue - glowingDelta > 0 ? initialValue - glowingDelta : 0;
-            if (allowDirChange == 1) {
-                *dir = 1;
+        if (newValue <= initialValue - glowingAmount || newValue < 0) {
+            newValue = initialValue - glowingAmount > 0 ? initialValue - glowingAmount : 0;
+            if (allowDirectionChange == 1) {
+                *direction = 1;
             }
         }
         return newValue;
     }
 }
 
-void glowing(struct CircleAnimationData *animData, struct Circle *circleItem){
+void computeGlowing(struct CircleAnimationData *animData, struct Circle *circleItem){
     
-    int newR = getGlowingValue(animData, &animData->gldir, animData->rinitial, circleItem->red, 0, HUE_GLOWING, HUE_GLOWING_VELOCITY);
-    int newG = getGlowingValue(animData, &animData->gldir, animData->ginitial, circleItem->green, 0, HUE_GLOWING, HUE_GLOWING_VELOCITY);
-    int newB = getGlowingValue(animData, &animData->gldir, animData->binitial, circleItem->blue, 1, HUE_GLOWING, HUE_GLOWING_VELOCITY);
+    int newRed = getGlowingValue(animData, &animData->hueGlowgingDirection, animData->redInitial, circleItem->red, 0, HUE_GLOWING, HUE_GLOWING_VELOCITY);
+    int newGreen = getGlowingValue(animData, &animData->hueGlowgingDirection, animData->greenInitial, circleItem->green, 0, HUE_GLOWING, HUE_GLOWING_VELOCITY);
+    int newBlue = getGlowingValue(animData, &animData->hueGlowgingDirection, animData->blueInitial, circleItem->blue, 1, HUE_GLOWING, HUE_GLOWING_VELOCITY);
 
-    circleItem->red = newR;
-    circleItem->green = newG;
-    circleItem->blue = newB;
+    circleItem->red = newRed;
+    circleItem->green = newGreen;
+    circleItem->blue = newBlue;
 
-    int newRadious = getGlowingValue(animData, &animData->radiousdir, animData->radiousinitial, circleItem->radious, 1, RADIOUS_GLOWING, RADIOUS_GLOWING_VELOCITY);
+    int newRadious = getGlowingValue(animData, &animData->radiousDirection, animData->radiousInitial, circleItem->radious, 1, RADIOUS_GLOWING, RADIOUS_GLOWING_VELOCITY);
 
-    circleItem->radious =newRadious;
+    circleItem->radious = newRadious;
 
 }
 
 void handleCollisionX(struct CircleAnimationData *animData, struct Circle *circleItem){
     //COLLISON BORDER DETECT X
-    if (animData->xdir == 1) {
-        if ((circleItem->x + animData->xv + circleItem->radious) >= CANVAS_WIDTH) {
-            animData->xdir = 0;
-            animData->ydir = getRand(0, 1);
+    if (animData->xDirection == 1) {
+        if ((circleItem->x + animData->xVelovity + circleItem->radious) >= CANVAS_WIDTH) {
+            animData->xDirection = 0;
+            animData->yDirection = getRandInRange(0, 1);
             circleItem->x = CANVAS_WIDTH - circleItem->radious; //- abs(CANVAS_WIDTH - circleItem->x - circleItem->radious - animData->xv);
         } else {
-            circleItem->x += animData->xv;
+            circleItem->x += animData->xVelovity;
         }
     } else {
-        if ((circleItem->x - animData->xv - circleItem->radious) <= 0) {
-            animData->xdir = 1;
-            animData->ydir = getRand(0, 1);
+        if ((circleItem->x - animData->xVelovity - circleItem->radious) <= 0) {
+            animData->xDirection = 1;
+            animData->yDirection = getRandInRange(0, 1);
             circleItem->x = circleItem->radious; //abs(circleItem->x - circleItem->radious - animData->xv);
         } else {
-            circleItem->x -= animData->xv;
+            circleItem->x -= animData->xVelovity;
         }
     }
 }
 
 void handleCollisionY(struct CircleAnimationData *animData, struct Circle *circleItem){
     //COLLISON BORDER DETECT Y
-    if (animData->ydir == 1) {
-        if ((circleItem->y + animData->yv + circleItem->radious) >= CANVAS_HEIGHT) {
-            animData->ydir = 0;
-            animData->xdir = getRand(0, 1);
+    if (animData->yDirection == 1) {
+        if ((circleItem->y + animData->yVelocity + circleItem->radious) >= CANVAS_HEIGHT) {
+            animData->yDirection = 0;
+            animData->xDirection = getRandInRange(0, 1);
             circleItem->y = CANVAS_HEIGHT - circleItem->radious; //- abs(CANVAS_HEIGHT - circleItem->y - circleItem->radious - animData->yv);
         } else {
-            circleItem->y += animData->yv;
+            circleItem->y += animData->yVelocity;
         }
     } else {
-        if ((circleItem->y - animData->yv - circleItem->radious) <= 0) {
-            animData->ydir = 1;
-            animData->xdir = getRand(0, 1);
+        if ((circleItem->y - animData->yVelocity - circleItem->radious) <= 0) {
+            animData->yDirection = 1;
+            animData->xDirection = getRandInRange(0, 1);
             circleItem->y = circleItem->radious; //abs(circleItem->y - circleItem->radious - animData->yv);
         } else {
-            circleItem->y -= animData->yv;
+            circleItem->y -= animData->yVelocity;
         }
     }
 }
 
 void updateData() {
-
     for (int i=0; i<CIRCLES_NUMBER; i++){
-        accelerate(&circlesAnimationData[i]);
-        glowing(&circlesAnimationData[i], &circles[i]);
+        computeAcceleration(&circlesAnimationData[i]);
+        computeGlowing(&circlesAnimationData[i], &circles[i]);
         handleCollisionX(&circlesAnimationData[i], &circles[i]);
         handleCollisionY(&circlesAnimationData[i], &circles[i]);
     }
-
-}
-
-struct Circle *getCirclesMemoryPointerInBytes() {
-    return circles;
 }
